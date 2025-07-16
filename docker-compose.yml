@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    build: ./db
+    container_name: db_container
+    image: custom-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: daily_report_system
+      MYSQL_USER: repuser
+      MYSQL_PASSWORD: reppass
+    ports:
+      - "3307:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  web:
+    build: ./web
+    container_name: springboot-app
+    image: custom-springboot
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+
+networks:
+  app-network:
+    driver: bridge
